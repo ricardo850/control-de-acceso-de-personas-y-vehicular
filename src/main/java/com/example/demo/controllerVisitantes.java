@@ -11,6 +11,11 @@ public class controllerVisitantes {
     @PostMapping("/DatosVisitantes")
     public ResponseEntity<String> guardarDatos(@RequestBody VisitanteRequestTable visitante){
 
+     VisitanteRequestTable visitanteNuevo = new VisitanteRequestTable();
+     visitanteNuevo.setNombreApellidos(visitante.getNombreApellidos());
+     visitanteNuevo.setCedula(visitante.getCedula());
+     visitanteNuevo.setEmpresaPermiso(visitante.getEmpresaPermiso());
+     visitanteNuevo.setNombrePuesto(visitante.getNombrePuesto());
 
         return ResponseEntity.ok("datos enviados correctamente");
     }
