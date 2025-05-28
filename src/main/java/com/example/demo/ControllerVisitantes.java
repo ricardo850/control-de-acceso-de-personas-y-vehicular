@@ -3,27 +3,50 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500")
-
 @RestController
 public class ControllerVisitantes {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @PostMapping("/DatosVisitantes")
-    public ResponseEntity<String> guardarDatos(@RequestBody VisitanteRequestTable visitante) {
-        String nombrePuesto = visitante.getNombrePuesto();
 
-        String crearTabla = "CREATE TABLE IF NOT EXISTS " + nombrePuesto + " (" +
+    @PostMapping("/CrearBaseDatosCliente")
+    public ResponseEntity<Map<String, String>> CrearBaseDatosClientes(@RequestBody BaseDatosCliente cliente) {
+        String nuevaBaseDatos = cliente.getNombreBaseDatos();
+
+
+        jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS CONTRASENA_CLIENTES");
+
+
+        String crearTablaSQL = "CREATE TABLE IF NOT EXISTS CONTRASENA_CLIENTES.INICIOSESION (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "nombreBaseDatosCliente VARCHAR(100)," +
+                "contrasenaBaseDatosCliente VARCHAR(100)" +
+                ")";
+        jdbcTemplate.execute(crearTablaSQL);
+
+        String sqlInsert = "INSERT INTO CONTRASENA_CLIENTES.INICIOSESION (nombreBaseDatosCliente, contrasenaBaseDatosCliente) VALUES (?, ?)";
+        jdbcTemplate.update(sqlInsert, cliente.getNombreBaseDatos(), cliente.getContrasenaBaseDatos());
+
+        jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS " + nuevaBaseDatos);
+
+        return ResponseEntity.ok(Map.of("mensaje", "Se creó la base de datos para el cliente correctamente"));
+    }
+
+
+    @PostMapping("/DatosVisitantes")
+    public ResponseEntity<Map<String, String>> LlenarDatosFormulario(@RequestBody Visitante visitante){
+        String nombreTablaPuesto = visitante.getNombrePuesto();
+        String crearTabla = "CREATE TABLE IF NOT EXISTS " + nombreTablaPuesto + " (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "NombreApellidos VARCHAR(100), " +
                 "cedula VARCHAR(15), " +
+                "empresaGestionaPuesto VARCHAR(100)," +
                 "NombrePuesto VARCHAR(50), " +
                 "EmpresaPermiso VARCHAR(50), " +
                 "NombreApellidosEmergencia VARCHAR(100), " +
@@ -58,7 +81,8 @@ public class ControllerVisitantes {
 
         );
 
-return ResponseEntity.ok("se guardaron los datos y se creo la abse de datos");
-
     }
+
+
+
 }
