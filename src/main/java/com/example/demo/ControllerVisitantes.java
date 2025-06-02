@@ -40,34 +40,38 @@ public class ControllerVisitantes {
 
 
     @PostMapping("/DatosVisitantes")
-    public ResponseEntity<Map<String, String>> LlenarDatosFormulario(@RequestBody Visitante visitante){
+    public ResponseEntity<Map<String, String>> LlenarDatosFormulario(@RequestBody Visitante visitante) {
         String nombreTablaPuesto = visitante.getNombrePuesto();
-        String crearTabla = "CREATE TABLE IF NOT EXISTS " + nombreTablaPuesto + " (" +
+        String BaseDatosEmpresa = visitante.getEmpresaGestionaPuesto();
+
+        String tablaBaseDatos = BaseDatosEmpresa + "_" + nombreTablaPuesto;
+        String crearTabla = "CREATE TABLE IF NOT EXISTS " + tablaBaseDatos + " (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "NombreApellidos VARCHAR(100), " +
+                "nombreApellidos VARCHAR(100), " +
                 "cedula VARCHAR(15), " +
                 "empresaGestionaPuesto VARCHAR(100)," +
-                "NombrePuesto VARCHAR(50), " +
-                "EmpresaPermiso VARCHAR(50), " +
-                "NombreApellidosEmergencia VARCHAR(100), " +
-                "TelefonoEmergencia VARCHAR(15), " +
-                "Eps VARCHAR(50), " +
-                "Arl VARCHAR(50), " +
-                "FuncionarioGestionaVisita VARCHAR(50), " +
-                "TraeComputoExterno VARCHAR(50), " +
-                "MarcaEquipo VARCHAR(50), " +
-                "Serialequipo VARCHAR(20)" +
+                "nombrePuesto VARCHAR(50), " +
+                "empresaPermiso VARCHAR(50), " +
+                "nombreApellidosEmergencia VARCHAR(100), " +
+                "telefonoEmergencia VARCHAR(15), " +
+                "eps VARCHAR(50), " +
+                "arl VARCHAR(50), " +
+                "funcionarioGestionaVisita VARCHAR(50), " +
+                "traeComputoExterno VARCHAR(50), " +
+                "marcaEquipo VARCHAR(50), " +
+                "serialequipo VARCHAR(20)" +
                 ")";
 
         jdbcTemplate.execute(crearTabla);
-        String insertarDatos = "INSERT INTO " + nombrePuesto + "(" + "NombreApellidos, cedula, NombrePuesto, EmpresaPermiso, " +
-                "NombreApellidosEmergencia, TelefonoEmergencia, Eps, Arl, " +
-                "FuncionarioGestionaVisita, TraeComputoExterno, MarcaEquipo, Serialequipo" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertarDatos = "INSERT INTO " + tablaBaseDatos + "(" + "nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, empresaPermiso, " +
+                "nombreApellidosEmergencia, telefonoEmergencia, eps, arl, " +
+                "funcionarioGestionaVisita, traeComputoExterno, marcaEquipo, serialequipo" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         jdbcTemplate.update(insertarDatos,
                 visitante.getNombreApellidos(),
                 visitante.getCedula(),
+                visitante.getEmpresaGestionaPuesto(),
                 visitante.getNombrePuesto(),
                 visitante.getEmpresaPermiso(),
                 visitante.getNombreApellidosEmergencia(),
@@ -77,9 +81,11 @@ public class ControllerVisitantes {
                 visitante.getFuncionarioGestionaVisita(),
                 visitante.getTraeComputoExterno(),
                 visitante.getMarcaEquipo(),
-                visitante.getSerialequipo()
+                visitante.getSerialEquipo()
 
         );
+
+        return  ResponseEntity.ok(Map.of("mensaje","creada tabla correctamente"));
 
     }
 
