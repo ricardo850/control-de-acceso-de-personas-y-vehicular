@@ -44,8 +44,8 @@ public class ControllerVisitantes {
         String nombreTablaPuesto = visitante.getNombrePuesto();
         String BaseDatosEmpresa = visitante.getEmpresaGestionaPuesto();
 
-        String tablaBaseDatos = BaseDatosEmpresa + "_" + nombreTablaPuesto;
-        String crearTabla = "CREATE TABLE IF NOT EXISTS " + tablaBaseDatos + " (" +
+
+        String crearTabla = "CREATE TABLE IF NOT EXISTS " + nombreTablaPuesto + " (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "nombreApellidos VARCHAR(100), " +
                 "cedula VARCHAR(15), " +
@@ -62,8 +62,10 @@ public class ControllerVisitantes {
                 "serialequipo VARCHAR(20)" +
                 ")";
 
+        jdbcTemplate.execute("USE " + BaseDatosEmpresa);
         jdbcTemplate.execute(crearTabla);
-        String insertarDatos = "INSERT INTO " + tablaBaseDatos + "(" + "nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, empresaPermiso, " +
+
+        String insertarDatos = "INSERT INTO " + nombreTablaPuesto + " (nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, empresaPermiso, " +
                 "nombreApellidosEmergencia, telefonoEmergencia, eps, arl, " +
                 "funcionarioGestionaVisita, traeComputoExterno, marcaEquipo, serialequipo" +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
@@ -92,3 +94,4 @@ public class ControllerVisitantes {
 
 
 }
+

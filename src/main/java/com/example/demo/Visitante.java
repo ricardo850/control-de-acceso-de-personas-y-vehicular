@@ -20,6 +20,7 @@ public class Visitante {
     public Visitante() {
     }
 
+
     public Visitante(String nombreApellidos, String traeComputoExterno, String funcionarioGestionaVisita, String serialEquipo,
                      String marcaEquipo, String arl, String eps, String telefonoEmergencia, String nombreApellidosEmergencia,
                      String tipoSangre, String nombrePuesto, String empresaPermiso, String empresaGestionaPuesto, int cedula) {
