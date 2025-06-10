@@ -5,7 +5,6 @@ public class Visitante {
     private String nombreApellidos;
     private int cedula;
     private String empresaGestionaPuesto;
-    private String empresaPermiso;
     private String nombrePuesto;
     private String tipoSangre;
     private String nombreApellidosEmergencia;
@@ -23,7 +22,7 @@ public class Visitante {
 
     public Visitante(String nombreApellidos, String traeComputoExterno, String funcionarioGestionaVisita, String serialEquipo,
                      String marcaEquipo, String arl, String eps, String telefonoEmergencia, String nombreApellidosEmergencia,
-                     String tipoSangre, String nombrePuesto, String empresaPermiso, String empresaGestionaPuesto, int cedula) {
+                     String tipoSangre, String nombrePuesto,  String empresaGestionaPuesto, int cedula) {
         this.nombreApellidos = nombreApellidos;
         this.traeComputoExterno = traeComputoExterno;
         this.funcionarioGestionaVisita = funcionarioGestionaVisita;
@@ -35,7 +34,6 @@ public class Visitante {
         this.nombreApellidosEmergencia = nombreApellidosEmergencia;
         this.tipoSangre = tipoSangre;
         this.nombrePuesto = nombrePuesto;
-        this.empresaPermiso = empresaPermiso;
         this.empresaGestionaPuesto = empresaGestionaPuesto;
         this.cedula = cedula;
     }
@@ -64,13 +62,6 @@ public class Visitante {
         this.empresaGestionaPuesto = empresaGestionaPuesto;
     }
 
-    public String getEmpresaPermiso() {
-        return empresaPermiso;
-    }
-
-    public void setEmpresaPermiso(String empresaPermiso) {
-        this.empresaPermiso = empresaPermiso;
-    }
 
     public String getNombrePuesto() {
         return nombrePuesto;

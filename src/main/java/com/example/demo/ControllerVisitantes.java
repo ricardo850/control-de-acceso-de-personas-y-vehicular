@@ -1,10 +1,15 @@
 package com.example.demo;
 
+import com.mysql.cj.jdbc.ConnectionImpl;
+import com.sun.jdi.connect.spi.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500")
@@ -51,9 +56,9 @@ public class ControllerVisitantes {
                 "cedula VARCHAR(15), " +
                 "empresaGestionaPuesto VARCHAR(100)," +
                 "nombrePuesto VARCHAR(50), " +
-                "empresaPermiso VARCHAR(50), " +
                 "nombreApellidosEmergencia VARCHAR(100), " +
                 "telefonoEmergencia VARCHAR(15), " +
+                "tipoSangre VARCHAR(50)," +
                 "eps VARCHAR(50), " +
                 "arl VARCHAR(50), " +
                 "funcionarioGestionaVisita VARCHAR(50), " +
@@ -65,19 +70,19 @@ public class ControllerVisitantes {
         jdbcTemplate.execute("USE " + BaseDatosEmpresa);
         jdbcTemplate.execute(crearTabla);
 
-        String insertarDatos = "INSERT INTO " + nombreTablaPuesto + " (nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, empresaPermiso, " +
-                "nombreApellidosEmergencia, telefonoEmergencia, eps, arl, " +
+        String insertarDatos = "INSERT INTO " + nombreTablaPuesto + " (nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, " +
+                "nombreApellidosEmergencia, telefonoEmergencia, tipoSangre, eps, arl, " +
                 "funcionarioGestionaVisita, traeComputoExterno, marcaEquipo, serialequipo" +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         jdbcTemplate.update(insertarDatos,
                 visitante.getNombreApellidos(),
-                visitante.getCedula(),
+                String.valueOf(visitante.getCedula()),
                 visitante.getEmpresaGestionaPuesto(),
                 visitante.getNombrePuesto(),
-                visitante.getEmpresaPermiso(),
                 visitante.getNombreApellidosEmergencia(),
                 visitante.getTelefonoEmergencia(),
+                visitante.getTipoSangre(),
                 visitante.getEps(),
                 visitante.getArl(),
                 visitante.getFuncionarioGestionaVisita(),
@@ -90,6 +95,35 @@ public class ControllerVisitantes {
         return  ResponseEntity.ok(Map.of("mensaje","creada tabla correctamente"));
 
     }
+
+
+    @PostMapping("/inicioSesion")
+    public ResponseEntity<Map<String, Object>> FunctionInicioSesion(@RequestBody InicioSesion inicioSesion) {
+        String BaseDatos = inicioSesion.getNombreEmpresaVisitada();
+        String TablaPuesto = inicioSesion.getPuestoTrabajo();
+        String Contrasena = inicioSesion.getContrasenaEmpresa();
+
+        String verificarDatos = "SELECT * FROM contrasena_clientes.iniciosesion WHERE nombreBaseDatosCliente = ? AND contrasenaBaseDatosCliente = ? ";
+
+        List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, BaseDatos, Contrasena);
+
+        if (!resultados.isEmpty()) {
+            jdbcTemplate.execute("USE " + BaseDatos);
+            String tablaDatos = "SELECT * FROM " + TablaPuesto;
+            List<Map<String, Object>> resultadosDatos = jdbcTemplate.queryForList(tablaDatos);
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Usuario encontrado",
+                    "datos", resultadosDatos
+            ));
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "no se encontro el usuario"));
+        }
+
+
+
+    }
+
+
 
 
 
