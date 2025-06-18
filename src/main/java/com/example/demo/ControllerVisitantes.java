@@ -50,6 +50,7 @@ public class ControllerVisitantes {
         String BaseDatosEmpresa = visitante.getEmpresaGestionaPuesto();
 
 
+
         String crearTabla = "CREATE TABLE IF NOT EXISTS " + nombreTablaPuesto + " (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "nombreApellidos VARCHAR(100), " +
@@ -92,7 +93,7 @@ public class ControllerVisitantes {
 
         );
 
-        return  ResponseEntity.ok(Map.of("mensaje","creada tabla correctamente"));
+        return  ResponseEntity.ok(Map.of("mensaje","enviado"));
 
     }
 
@@ -103,20 +104,31 @@ public class ControllerVisitantes {
         String TablaPuesto = inicioSesion.getPuestoTrabajo();
         String Contrasena = inicioSesion.getContrasenaEmpresa();
 
+        String validar = "true";
+
         String verificarDatos = "SELECT * FROM contrasena_clientes.iniciosesion WHERE nombreBaseDatosCliente = ? AND contrasenaBaseDatosCliente = ? ";
 
         List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, BaseDatos, Contrasena);
 
         if (!resultados.isEmpty()) {
             jdbcTemplate.execute("USE " + BaseDatos);
-            String tablaDatos = "SELECT * FROM " + TablaPuesto;
-            List<Map<String, Object>> resultadosDatos = jdbcTemplate.queryForList(tablaDatos);
-            return ResponseEntity.ok(Map.of(
-                    "mensaje", "Usuario encontrado",
-                    "datos", resultadosDatos
-            ));
+            String sqlVerificarTabla = "SHOW TABLES LIKE ?";
+            List<Map<String, Object>> tablaExiste = jdbcTemplate.queryForList(sqlVerificarTabla,TablaPuesto);
+
+            if (!tablaExiste.isEmpty()) {
+                String tablaDatos = "SELECT * FROM " + TablaPuesto;
+                List<Map<String, Object>> resultadosDatos = jdbcTemplate.queryForList(tablaDatos);
+                return ResponseEntity.ok(Map.of(
+                        "mensaje", "tablaExiste",
+                        "datos", resultadosDatos
+                ));
+            } else {
+                return ResponseEntity.ok(Map.of("mensaje", "tablaNoExiste"));
+            }
+
         } else {
-            return ResponseEntity.ok(Map.of("mensaje", "no se encontro el usuario"));
+            validar = "falso";
+            return ResponseEntity.ok(Map.of("mensaje", validar));
         }
 
 

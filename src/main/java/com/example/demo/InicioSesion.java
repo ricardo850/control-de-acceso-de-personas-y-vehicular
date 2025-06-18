@@ -14,6 +14,7 @@ public class InicioSesion {
         this.contrasenaEmpresa = contrasenaEmpresa;
     }
 
+
     public String getNombreEmpresaVisitada() {
         return nombreEmpresaVisitada;
     }
