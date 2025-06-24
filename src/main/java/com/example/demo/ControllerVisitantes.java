@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+
 @RestController
 public class ControllerVisitantes {
 
@@ -23,7 +23,7 @@ public class ControllerVisitantes {
     @PostMapping("/CrearBaseDatosCliente")
     public ResponseEntity<Map<String, String>> CrearBaseDatosClientes(@RequestBody BaseDatosCliente cliente) {
         String nuevaBaseDatos = cliente.getNombreBaseDatos();
-
+        String Puesto = cliente.getNombreBaseDatos();
 
         jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS CONTRASENA_CLIENTES");
 
@@ -39,6 +39,15 @@ public class ControllerVisitantes {
         jdbcTemplate.update(sqlInsert, cliente.getNombreBaseDatos(), cliente.getContrasenaBaseDatos());
 
         jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS " + nuevaBaseDatos);
+        jdbcTemplate.execute("USE " + nuevaBaseDatos);
+
+        String crearTablaPuesto = "CREATE TABLE IF NOT EXISTS puestos (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "puesto VARCHAR(100)" +
+                ")";
+
+        jdbcTemplate.execute(crearTablaPuesto);
+
 
         return ResponseEntity.ok(Map.of("mensaje", "Se creó la base de datos para el cliente correctamente"));
     }
@@ -48,6 +57,7 @@ public class ControllerVisitantes {
     public ResponseEntity<Map<String, String>> LlenarDatosFormulario(@RequestBody Visitante visitante) {
         String nombreTablaPuesto = visitante.getNombrePuesto();
         String BaseDatosEmpresa = visitante.getEmpresaGestionaPuesto();
+
 
 
 
@@ -101,7 +111,6 @@ public class ControllerVisitantes {
     @PostMapping("/inicioSesion")
     public ResponseEntity<Map<String, Object>> FunctionInicioSesion(@RequestBody InicioSesion inicioSesion) {
         String BaseDatos = inicioSesion.getNombreEmpresaVisitada();
-        String TablaPuesto = inicioSesion.getPuestoTrabajo();
         String Contrasena = inicioSesion.getContrasenaEmpresa();
 
         String validar = "true";
@@ -111,21 +120,10 @@ public class ControllerVisitantes {
         List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, BaseDatos, Contrasena);
 
         if (!resultados.isEmpty()) {
-            jdbcTemplate.execute("USE " + BaseDatos);
-            String sqlVerificarTabla = "SHOW TABLES LIKE ?";
-            List<Map<String, Object>> tablaExiste = jdbcTemplate.queryForList(sqlVerificarTabla,TablaPuesto);
-
-            if (!tablaExiste.isEmpty()) {
-                String tablaDatos = "SELECT * FROM " + TablaPuesto;
-                List<Map<String, Object>> resultadosDatos = jdbcTemplate.queryForList(tablaDatos);
-                return ResponseEntity.ok(Map.of(
-                        "mensaje", "tablaExiste",
-                        "datos", resultadosDatos
-                ));
-            } else {
-                return ResponseEntity.ok(Map.of("mensaje", "tablaNoExiste"));
-            }
-
+            validar = "true";
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", validar
+                    ));
         } else {
             validar = "falso";
             return ResponseEntity.ok(Map.of("mensaje", validar));
@@ -135,8 +133,78 @@ public class ControllerVisitantes {
 
     }
 
+    @GetMapping("/traerEmpresa")
+    public ResponseEntity<Map<String,Object>> FunctionTraerEmpresas(){
+        String tablaDatos = "SELECT * FROM contrasena_clientes.iniciosesion";
+        List<Map<String, Object>> tablaExiste = jdbcTemplate.queryForList(tablaDatos);
+        if(!tablaExiste.isEmpty()) {
+
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "true",
+                    "datos", tablaExiste
+            ));
+        }else{
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "false"
+            ));
+
+        }
+    }
 
 
+    @PostMapping("/TraerPuestos")
+    public ResponseEntity<Map<String,Object>> FunctionTraerPuestos(@RequestBody Visitante visitante){
+        String nombreBD = visitante.getEmpresaGestionaPuesto();
+        jdbcTemplate.execute("USE " + nombreBD);
+        // cambia según tu caso
+        String sql = "SELECT SELECT * FROM ";
+
+        List<Map<String, Object>> tablas = jdbcTemplate.queryForList(sql, nombreBD);
+        if(!tablas.isEmpty()) {
+
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "true",
+                    "datos", tablas
+            ));
+        }else{
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "false"
+            ));
+
+        }
+    }
+
+    @PostMapping("/crearPuesto")
+    public ResponseEntity<Map<String,Object>> FunctionCrearPuesto(@RequestBody Puesto puesto){
+        String NombreBaseDatos = puesto.getNombreBaseDatosDatos();
+        String NombrePuesto = puesto.getPuesto();
+
+        jdbcTemplate.execute("USE " + NombreBaseDatos);
+
+        String crearTabla = "CREATE TABLE IF NOT EXISTS `" + NombrePuesto + "` (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "nombreApellidos VARCHAR(100), " +
+                "cedula VARCHAR(15), " +
+                "empresaGestionaPuesto VARCHAR(100), " +
+                "nombrePuesto VARCHAR(50), " +
+                "nombreApellidosEmergencia VARCHAR(100), " +
+                "telefonoEmergencia VARCHAR(15), " +
+                "tipoSangre VARCHAR(50), " +
+                "eps VARCHAR(50), " +
+                "arl VARCHAR(50), " +
+                "funcionarioGestionaVisita VARCHAR(50), " +
+                "traeComputoExterno VARCHAR(50), " +
+                "marcaEquipo VARCHAR(50), " +
+                "serialequipo VARCHAR(20)" +
+                ")";
+
+        jdbcTemplate.execute(crearTabla);
+
+
+        return ResponseEntity.ok(Map.of(
+                "mensaje", "true"
+        ));
+    }
 
 
 }
