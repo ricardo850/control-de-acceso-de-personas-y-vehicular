@@ -156,8 +156,8 @@ public class ControllerVisitantes {
     public ResponseEntity<Map<String,Object>> FunctionTraerPuestos(@RequestBody Visitante visitante){
         String nombreBD = visitante.getEmpresaGestionaPuesto();
         jdbcTemplate.execute("USE " + nombreBD);
-        // cambia según tu caso
-        String sql = "SELECT SELECT * FROM ";
+
+        String sql = "SELECT * FROM puestos";
 
         List<Map<String, Object>> tablas = jdbcTemplate.queryForList(sql, nombreBD);
         if(!tablas.isEmpty()) {
@@ -201,6 +201,10 @@ public class ControllerVisitantes {
         jdbcTemplate.execute(crearTabla);
 
 
+
+        String insertarDatos = "INSERT INTO puestos (puesto) VALUES (?)";
+
+        jdbcTemplate.update(insertarDatos,NombrePuesto);
         return ResponseEntity.ok(Map.of(
                 "mensaje", "true"
         ));
