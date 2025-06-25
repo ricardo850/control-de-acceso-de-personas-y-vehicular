@@ -2,11 +2,11 @@ package com.example.demo;
 
 public class Puesto {
     private String nombreBaseDatosDatos;
-    private String puesto;
+    private String nombrepuesto;
 
     public Puesto(String nombreBaseDatosDatos, String puesto) {
         this.nombreBaseDatosDatos = nombreBaseDatosDatos;
-        this.puesto = puesto;
+        this.nombrepuesto = puesto;
     }
 
     public String getNombreBaseDatosDatos() {
@@ -17,11 +17,11 @@ public class Puesto {
         this.nombreBaseDatosDatos = nombreBaseDatosDatos;
     }
 
-    public String getPuesto() {
-        return puesto;
+    public String getNombrepuesto() {
+        return nombrepuesto;
     }
 
-    public void setPuesto(String puesto) {
-        this.puesto = puesto;
+    public void setNombrepuesto(String nombrepuesto) {
+        this.nombrepuesto = nombrepuesto;
     }
 }

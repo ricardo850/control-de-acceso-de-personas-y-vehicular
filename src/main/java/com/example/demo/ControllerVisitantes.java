@@ -1,14 +1,10 @@
 package com.example.demo;
 
-import com.mysql.cj.jdbc.ConnectionImpl;
-import com.sun.jdi.connect.spi.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 
@@ -155,11 +151,10 @@ public class ControllerVisitantes {
     @PostMapping("/TraerPuestos")
     public ResponseEntity<Map<String,Object>> FunctionTraerPuestos(@RequestBody Visitante visitante){
         String nombreBD = visitante.getEmpresaGestionaPuesto();
-        jdbcTemplate.execute("USE " + nombreBD);
 
-        String sql = "SELECT * FROM puestos";
 
-        List<Map<String, Object>> tablas = jdbcTemplate.queryForList(sql, nombreBD);
+        String sql = "SELECT * FROM `" + nombreBD + "`.puestos";
+        List<Map<String, Object>> tablas = jdbcTemplate.queryForList(sql);
         if(!tablas.isEmpty()) {
 
             return ResponseEntity.ok(Map.of(
@@ -177,7 +172,7 @@ public class ControllerVisitantes {
     @PostMapping("/crearPuesto")
     public ResponseEntity<Map<String,Object>> FunctionCrearPuesto(@RequestBody Puesto puesto){
         String NombreBaseDatos = puesto.getNombreBaseDatosDatos();
-        String NombrePuesto = puesto.getPuesto();
+        String NombrePuesto = puesto.getNombrepuesto();
 
         jdbcTemplate.execute("USE " + NombreBaseDatos);
 
