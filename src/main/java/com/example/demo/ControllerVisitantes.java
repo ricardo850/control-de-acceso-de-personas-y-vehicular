@@ -35,11 +35,10 @@ public class ControllerVisitantes {
         jdbcTemplate.update(sqlInsert, cliente.getNombreBaseDatos(), cliente.getContrasenaBaseDatos());
 
         jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS " + nuevaBaseDatos);
-        jdbcTemplate.execute("USE " + nuevaBaseDatos);
-
-        String crearTablaPuesto = "CREATE TABLE IF NOT EXISTS puestos (" +
+        String crearTablaPuesto = "CREATE TABLE IF NOT EXISTS `" + nuevaBaseDatos + "`.puestos (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "puesto VARCHAR(100)" +
+                "puesto VARCHAR(100), "+
+                "contrasena VARCHAR(100)" +
                 ")";
 
         jdbcTemplate.execute(crearTablaPuesto);
@@ -170,6 +169,7 @@ public class ControllerVisitantes {
     public ResponseEntity<Map<String,Object>> FunctionCrearPuesto(@RequestBody Puesto puesto){
         String NombreBaseDatos = puesto.getNombreBaseDatosDatos();
         String NombrePuesto = puesto.getNombrepuesto();
+        String ContrasenaPuesto = puesto.getContrasena();
 
         jdbcTemplate.execute("USE " + NombreBaseDatos);
 
@@ -194,12 +194,39 @@ public class ControllerVisitantes {
 
 
 
-        String insertarDatos = "INSERT INTO puestos (puesto) VALUES (?)";
+        String insertarDatos = "INSERT INTO puestos (puesto,contrasena) VALUES (?,?)";
 
-        jdbcTemplate.update(insertarDatos,NombrePuesto);
+        jdbcTemplate.update(insertarDatos,NombrePuesto,ContrasenaPuesto);
         return ResponseEntity.ok(Map.of(
                 "mensaje", "true"
         ));
+    }
+
+    @PostMapping("/TraerPuestosInformacion")
+    public ResponseEntity<Map<String,Object>> FunctionTraerPuestosInformacion(@RequestBody Puesto puesto){
+        String nombreBD = puesto.getNombreBaseDatosDatos();
+        String nombrePuesto = puesto.getNombrepuesto();;
+        String contrasena = puesto.getContrasena();
+
+        if (!nombreBD.matches("^[a-zA-Z0-9_]+$") || !nombrePuesto.matches("^[a-zA-Z0-9_]+$")) {
+            throw new IllegalArgumentException("Nombre de base de datos o tabla inválido");
+        }
+
+        String sql = "SELECT * FROM `" + nombreBD + "`.puestos WHERE puesto = ? AND contrasena = ?";
+        List<Map<String, Object>> resultados = jdbcTemplate.queryForList(sql, nombrePuesto, contrasena);
+        if(!resultados.isEmpty()) {
+            String sqlDatos = "SELECT * FROM `" + nombreBD + "`.`" + nombrePuesto + "`";
+            List<Map<String, Object>> resultadosDatos = jdbcTemplate.queryForList(sqlDatos);
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "ok",
+                    "datos", resultadosDatos
+            ));
+        }else{
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "false"
+            ));
+
+        }
     }
 
 
