@@ -41,6 +41,9 @@ public class ControllerVisitantes {
                 "contrasena VARCHAR(100)" +
                 ")";
 
+
+
+
         jdbcTemplate.execute(crearTablaPuesto);
 
 
@@ -102,14 +105,14 @@ public class ControllerVisitantes {
 
     @PostMapping("/inicioSesion")
     public ResponseEntity<Map<String, Object>> FunctionInicioSesion(@RequestBody InicioSesion inicioSesion) {
-        String BaseDatos = inicioSesion.getNombreEmpresaVisitada();
-        String Contrasena = inicioSesion.getContrasenaEmpresa();
+        String correo = inicioSesion.getCorreo();
+        String Contrasena = inicioSesion.getContrasena();
 
         String validar = "true";
 
-        String verificarDatos = "SELECT * FROM contrasena_clientes.iniciosesion WHERE nombreBaseDatosCliente = ? AND contrasenaBaseDatosCliente = ? ";
+        String verificarDatos = "SELECT * FROM contrasena_clientes.iniciosesion WHERE correo = ? AND contrasena = ? ";
 
-        List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, BaseDatos, Contrasena);
+        List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, correo, Contrasena);
 
         if (!resultados.isEmpty()) {
             validar = "true";

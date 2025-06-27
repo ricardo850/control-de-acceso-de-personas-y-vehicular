@@ -1,31 +1,31 @@
 package com.example.demo;
 
 public class InicioSesion {
-    private String nombreEmpresaVisitada;
-    private String contrasenaEmpresa;
+    private String correo;
+    private String contrasena;
 
     public InicioSesion() {
     }
 
     public InicioSesion(String nombreEmpresaVisitada, String puestoTrabajo, String contrasenaEmpresa) {
-        this.nombreEmpresaVisitada = nombreEmpresaVisitada;
-        this.contrasenaEmpresa = contrasenaEmpresa;
+        this.correo = nombreEmpresaVisitada;
+        this.contrasena = contrasenaEmpresa;
     }
 
 
-    public String getNombreEmpresaVisitada() {
-        return nombreEmpresaVisitada;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setNombreEmpresaVisitada(String nombreEmpresaVisitada) {
-        this.nombreEmpresaVisitada = nombreEmpresaVisitada;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public String getContrasenaEmpresa() {
-        return contrasenaEmpresa;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContrasenaEmpresa(String contrasenaEmpresa) {
-        this.contrasenaEmpresa = contrasenaEmpresa;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }
