@@ -325,5 +325,33 @@ public class ControllerVisitantes {
     }
 
 
+
+    @PostMapping("/inicioSesionAdministrador")
+    public ResponseEntity<Map<String, Object>> FunctionInicioSesionAdministrador(@RequestBody InicioSesionAdministrador inicioSesion) {
+        String correo = inicioSesion.getCorreo();
+        String Contrasena = inicioSesion.getContrasena();
+
+
+        String validar = "true";
+
+        String verificarDatos = "SELECT * FROM contrasena_clientes.iniciosesion_administrador WHERE correo = ? AND contrasena = ? ";
+
+        List<Map<String, Object>> resultados = jdbcTemplate.queryForList(verificarDatos, correo, Contrasena);
+
+        if (!resultados.isEmpty()) {
+            validar = "true";
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", validar
+            ));
+        } else {
+            validar = "falso";
+            return ResponseEntity.ok(Map.of("mensaje", validar));
+        }
+
+
+
+    }
+
+
 }
 
