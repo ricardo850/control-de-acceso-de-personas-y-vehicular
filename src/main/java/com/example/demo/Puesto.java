@@ -5,11 +5,8 @@ public class Puesto {
     private String nombrepuesto;
     private String contrasena;
 
-    public Puesto(String nombreBaseDatosDatos, String puesto,String contrasena) {
-        this.nombreBaseDatosDatos = nombreBaseDatosDatos;
-        this.nombrepuesto = puesto;
-        this.contrasena = contrasena;
 
+    public Puesto() {
     }
 
     public String getContrasena() {
