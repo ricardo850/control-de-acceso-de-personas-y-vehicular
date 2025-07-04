@@ -7,9 +7,27 @@ public class Vehiculos {
     private String nombrePuesto;
     private String tipoVehiculo;
     private String numeroPlaca;
+    private String fechaIngresoVehiculo;
+    private String fechaSalidaVehiculo;
     private String observacion;
 
     public Vehiculos() {
+    }
+
+    public String getFechaIngresoVehiculo() {
+        return fechaIngresoVehiculo;
+    }
+
+    public void setFechaIngresoVehiculo(String fechaIngresoVehiculo) {
+        this.fechaIngresoVehiculo = fechaIngresoVehiculo;
+    }
+
+    public String getFechaSalidaVehiculo() {
+        return fechaSalidaVehiculo;
+    }
+
+    public void setFechaSalidaVehiculo(String fechaSalidaVehiculo) {
+        this.fechaSalidaVehiculo = fechaSalidaVehiculo;
     }
 
     public String getNombreApellidoIngreso() {

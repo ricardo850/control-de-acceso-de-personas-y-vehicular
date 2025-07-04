@@ -43,7 +43,10 @@ public class ControllerVisitantes {
             String crearTabla = "CREATE TABLE IF NOT EXISTS puestos (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
                     "puesto VARCHAR(100), " +
+                    "ubicacionPuesto VARCHAR(100)," +
+                    "fechaCreacion VARCHAR(100),"+
                     "contrasena VARCHAR(100))";
+
 
             stmt.execute(crearTabla);
 
@@ -54,38 +57,21 @@ public class ControllerVisitantes {
         return  ResponseEntity.ok(Map.of("mensaje" , "ok"));
     }
 
-
+    @Autowired
+    private EnvioCorreo envioCorreo;
     @PostMapping("/DatosVisitantes")
     public ResponseEntity<Map<String, String>> LlenarDatosFormulario(@RequestBody Visitante visitante) {
         String nombreTablaPuesto = visitante.getNombrePuesto();
         String baseDatosEmpresa = visitante.getEmpresaGestionaPuesto();
 
+
         // Protege nombres dinámicos con backticks para evitar errores por caracteres inválidos
         String tablaCompleta = "`" + baseDatosEmpresa + "`.`" + nombreTablaPuesto + "`";
 
-        String crearTabla = "CREATE TABLE IF NOT EXISTS " + tablaCompleta + " (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "nombreApellidos VARCHAR(100), " +
-                "cedula VARCHAR(15), " +
-                "empresaGestionaPuesto VARCHAR(100), " +
-                "nombrePuesto VARCHAR(50), " +
-                "nombreApellidosEmergencia VARCHAR(100), " +
-                "telefonoEmergencia VARCHAR(15), " +
-                "tipoSangre VARCHAR(50), " +
-                "eps VARCHAR(50), " +
-                "arl VARCHAR(50), " +
-                "funcionarioGestionaVisita VARCHAR(50), " +
-                "traeComputoExterno VARCHAR(50), " +
-                "marcaEquipo VARCHAR(50), " +
-                "serialequipo VARCHAR(20)" +
-                ")";
-
-        jdbcTemplate.execute(crearTabla);
-
         String insertarDatos = "INSERT INTO " + tablaCompleta + " (nombreApellidos, cedula, empresaGestionaPuesto, nombrePuesto, " +
                 "nombreApellidosEmergencia, telefonoEmergencia, tipoSangre, eps, arl, " +
-                "funcionarioGestionaVisita, traeComputoExterno, marcaEquipo, serialequipo" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "funcionarioGestionaVisita,correofuncionarioGestionaVisita,fechaIngresoPuesto, traeComputoExterno, marcaEquipo, serialequipo" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
         jdbcTemplate.update(insertarDatos,
                 visitante.getNombreApellidos(),
@@ -98,10 +84,14 @@ public class ControllerVisitantes {
                 visitante.getEps(),
                 visitante.getArl(),
                 visitante.getFuncionarioGestionaVisita(),
+                visitante.getCorreofuncionarioGestionaVisita(),
+                visitante.getFechaIngresoPuesto(),
                 visitante.getTraeComputoExterno(),
                 visitante.getMarcaEquipo(),
                 visitante.getSerialEquipo()
         );
+
+        envioCorreo.enviarEmail(visitante.getCorreofuncionarioGestionaVisita(), visitante);
 
         return ResponseEntity.ok(Map.of("mensaje", "enviado"));
     }
@@ -179,6 +169,8 @@ public class ControllerVisitantes {
         String NombreBaseDatos = puesto.getNombreBaseDatosDatos();
         String NombrePuesto = puesto.getNombrepuesto();
         String ContrasenaPuesto = puesto.getContrasena();
+        String ubicacionPuesto = puesto.getUbicacionPuesto();
+        String FechaCreacionPuesto = puesto.getFechaCreacionPuesto();
 
         jdbcTemplate.execute("USE " + NombreBaseDatos);
 
@@ -194,9 +186,13 @@ public class ControllerVisitantes {
                 "eps VARCHAR(50), " +
                 "arl VARCHAR(50), " +
                 "funcionarioGestionaVisita VARCHAR(50), " +
+                "correofuncionarioGestionaVisita VARCHAR(50),"+
+                "fechaIngresoPuesto VARCHAR(50)," +
+                "fechaSalidaPuesto VARCHAR(50),"+
                 "traeComputoExterno VARCHAR(50), " +
                 "marcaEquipo VARCHAR(50), " +
-                "serialequipo VARCHAR(20)" +
+                "serialequipo VARCHAR(20)," +
+                "estadoVisita VARCHAR(50)" +
                 ")";
 
         jdbcTemplate.execute(crearTabla);
@@ -210,15 +206,17 @@ public class ControllerVisitantes {
                 "nombrePuesto VARCHAR(50), " +
                 "tipoVehiculo VARCHAR(50), " +
                 "numeroPlaca VARCHAR(100), " +
+                "fechaIngresoVehiculo VARCHAR(100),"+
+                "fechaSalidaVehiculo VARCHAR(100),"+
                 "observacion VARCHAR(100)" +
                 ")";
 
 
         jdbcTemplate.execute(crearTablaVehiculos);
 
-        String insertarDatos = "INSERT INTO puestos (puesto,contrasena) VALUES (?,?)";
+        String insertarDatos = "INSERT INTO puestos (puesto,ubicacionPuesto,fechaCreacion,contrasena) VALUES (?,?,?,?)";
 
-        jdbcTemplate.update(insertarDatos,NombrePuesto,ContrasenaPuesto);
+        jdbcTemplate.update(insertarDatos,NombrePuesto,ubicacionPuesto,FechaCreacionPuesto,ContrasenaPuesto);
         return ResponseEntity.ok(Map.of(
                 "mensaje", "true"
         ));
@@ -261,9 +259,11 @@ public class ControllerVisitantes {
            String tipoVehiculo = vehiculos.getTipoVehiculo();
            String numeroPlaca = vehiculos.getNumeroPlaca();
            String observacion = vehiculos.getObservacion();
+           String fechaIngresoVehiculo = vehiculos.getFechaIngresoVehiculo();
 
-            String insertarDatos = "INSERT INTO " + empresaGestionaPuesto + "." + "vehiculos_" + nombrePuesto + "(nombreApellidoIngreso,cedula,empresaGestionaPuesto,nombrePuesto,tipoVehiculo,numeroPlaca,observacion) VALUES (?,?,?,?,?,?,?)";
-            jdbcTemplate.update(insertarDatos,nombreApellidoIngreso,cedula,empresaGestionaPuesto,nombrePuesto,tipoVehiculo,numeroPlaca,observacion);
+
+            String insertarDatos = "INSERT INTO " + empresaGestionaPuesto + "." + "vehiculos_" + nombrePuesto + "(nombreApellidoIngreso,cedula,empresaGestionaPuesto,nombrePuesto,tipoVehiculo,numeroPlaca,fechaIngresoVehiculo,observacion) VALUES (?,?,?,?,?,?,?,?)";
+            jdbcTemplate.update(insertarDatos,nombreApellidoIngreso,cedula,empresaGestionaPuesto,nombrePuesto,tipoVehiculo,numeroPlaca,fechaIngresoVehiculo,observacion);
             return ResponseEntity.ok(Map.of(
                     "mensaje", "ok"
             ));

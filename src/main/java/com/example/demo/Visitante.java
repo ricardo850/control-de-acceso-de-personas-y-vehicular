@@ -12,30 +12,31 @@ public class Visitante {
     private String eps;
     private String arl;
     private String funcionarioGestionaVisita;
+    private String correofuncionarioGestionaVisita;
+    private String fechaIngresoPuesto;
     private String traeComputoExterno;
     private String marcaEquipo;
     private String serialEquipo;
+    private String estadoVisita;
 
     public Visitante() {
     }
 
 
-    public Visitante(String nombreApellidos, String traeComputoExterno, String funcionarioGestionaVisita, String serialEquipo,
-                     String marcaEquipo, String arl, String eps, String telefonoEmergencia, String nombreApellidosEmergencia,
-                     String tipoSangre, String nombrePuesto,  String empresaGestionaPuesto, int cedula) {
-        this.nombreApellidos = nombreApellidos;
-        this.traeComputoExterno = traeComputoExterno;
-        this.funcionarioGestionaVisita = funcionarioGestionaVisita;
-        this.serialEquipo = serialEquipo;
-        this.marcaEquipo = marcaEquipo;
-        this.arl = arl;
-        this.eps = eps;
-        this.telefonoEmergencia = telefonoEmergencia;
-        this.nombreApellidosEmergencia = nombreApellidosEmergencia;
-        this.tipoSangre = tipoSangre;
-        this.nombrePuesto = nombrePuesto;
-        this.empresaGestionaPuesto = empresaGestionaPuesto;
-        this.cedula = cedula;
+    public String getCorreofuncionarioGestionaVisita() {
+        return correofuncionarioGestionaVisita;
+    }
+
+    public void setCorreofuncionarioGestionaVisita(String correofuncionarioGestionaVisita) {
+        this.correofuncionarioGestionaVisita = correofuncionarioGestionaVisita;
+    }
+
+    public String getFechaIngresoPuesto() {
+        return fechaIngresoPuesto;
+    }
+
+    public void setFechaIngresoPuesto(String fechaIngresoPuesto) {
+        this.fechaIngresoPuesto = fechaIngresoPuesto;
     }
 
     public String getNombreApellidos() {

@@ -4,9 +4,27 @@ public class Puesto {
     private String nombreBaseDatosDatos;
     private String nombrepuesto;
     private String contrasena;
+    private String ubicacionPuesto;
+    private String fechaCreacionPuesto;
 
 
     public Puesto() {
+    }
+
+    public String getUbicacionPuesto() {
+        return ubicacionPuesto;
+    }
+
+    public void setUbicacionPuesto(String ubicacionPuesto) {
+        this.ubicacionPuesto = ubicacionPuesto;
+    }
+
+    public String getFechaCreacionPuesto() {
+        return fechaCreacionPuesto;
+    }
+
+    public void setFechaCreacionPuesto(String fechaCreacionPuesto) {
+        this.fechaCreacionPuesto = fechaCreacionPuesto;
     }
 
     public String getContrasena() {
